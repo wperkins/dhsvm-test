@@ -1,0 +1,2185 @@
+################################################################################
+# DHSVM INPUT FILE FORMAT
+################################################################################
+# The file is organized in sections [...], which contain key = entry pairs.  
+# The file is free format, in that correct reading of the file is not dependnt 
+# on spaces and/or the order of the key-entry pairs within a section.  
+# The keys are not case-sensitive, but the entries are, because filenames on a 
+# UNIX platform are case-sensitive.  
+# Comments are preceded by a '#', and run from the occurrence of '#' till the 
+# end of the line. You can comment out an entire line (like in this 
+# header), or you can place a comment after an entry.  
+# It is important to place the key-entry pair in the correct section, since it 
+# will not be found if it is in another section.  
+# The easiest way to make the input file is to fill out this default template.  
+# Since DHSVM will only use the keys that it requires you do not have to worry 
+# about empty entries for keys that are not needed. For example, if you are 
+# running the model in point mode, you do not have to fill out the routing 
+# section.  If you have already filled it out you can leave it, since DHSVM will 
+# not use the information.  This allows easy switching between point and basin 
+# mode.  
+# For more information about the specific entries see the DHSVM web page
+################################################################################
+# OPTIONS SECTION 
+################################################################################
+[OPTIONS]                                 # Model Options
+Format               = NETCDF             # BIN, BYTESWAP or NETCDF
+Extent               = BASIN		  # POINT or BASIN
+Gradient             = TOPOGRAPHY         # TOPOGRAPHY or WATERTABLE
+Flow Routing         = NETWORK            # UNIT_HYDROGRAPH or NETWORK
+Sensible Heat Flux   = FALSE              # TRUE or FALSE
+
+Sediment	     = FALSE		  # TRUE or FALSE
+Sediment Input File  = ../configfiles/INPUT.mwm.rainycreek  # path for sediment configuration file 
+Overland Routing     = CONVENTIONAL	  # CONVENTIONAL or KINEMATIC 
+
+Interpolation        = VARCRESS           # NEAREST or INVDIST or VARCRESS
+MM5                  = FALSE   		  # TRUE or FALSE
+QPF                  = FALSE              # TRUE or FALSE
+PRISM                = FALSE              # TRUE or FALSE 
+PRISM data path      = ./input/prism/PrismMap   # path for PRISM files
+PRISM data extension = bin                # file extension for PRISM files 
+Canopy radiation attenuation mode = FIXED # FIXED or VARIABLE
+Shading              = FALSE	          # TRUE or FALSE  
+Shading data path    =                    # path for shading files 
+Shading data extension = bin              # file extension for shading files 
+Skyview data path    =                    # path for skyview file; for use with shading only
+Snotel               = FALSE              # TRUE or FALSE
+Outside              = TRUE  	          # TRUE or FALSE
+Rhoverride           = FALSE	          # TRUE or FALSE
+Precipitation Source = STATION            # STATION or RADAR
+Wind Source          = STATION            # STATION or MODEL
+Temperature lapse rate = CONSTANT         # CONSTANT or VARIABLE
+Precipitation lapse rate = CONSTANT       # CONSTANT, MAP, or VARIABLE 
+
+Infiltration	     = STATIC		  # STATIC or DYNAMIC 
+
+Cressman radius      = 10                 # in model pixels
+Cressman stations    = 4                  # number of stations
+Stream Temperature   = FALSE
+Riparian Shading     = FALSE
+Improved Radiation Scheme = FALSE
+Gridded Met Data     = FALSE
+Variable Light Transmittance = FALSE
+Canopy Gapping       = FALSE
+Snow Sliding         = FALSE
+
+################################################################################
+# MODEL AREA SECTION
+################################################################################
+[AREA]                                    # Model area
+Coordinate System    = USER_DEFINED       # UTM or USER_DEFINED Albers
+Extreme North        = 769092.750        # Coordinate for northern edge of grid
+Extreme West         = 394435.344         # Coordinate for western edge of grid
+Center Latitude      = 47.8178            # Central parallel of basin 
+Center Longitude     = -121.0165          # Central meridian of basin 
+Time Zone Meridian   = -121               # Time zone meridian for area
+Number of Rows       = 256                # Number of rows
+Number of Columns    = 329                # Number of columns
+Grid spacing         = 30                 # Grid resolution in m 
+
+################################################################################
+# TIME SECTION
+################################################################################
+[TIME]                                    # Model period cod
+Time Step            = 3                  # Model time step (hours)
+# spin up
+Model Start          = 05/04/1992-03      # Model start time (MM/DD/YYYY-HH) 
+Model End            = 10/01/1993-06  
+
+################################################################################
+# CONSTANTS SECTION
+################################################################################
+[CONSTANTS]                               # Model constants
+Ground Roughness     = 0.02               # Roughness of soil surface (m)
+Snow Roughness       = 0.01               # Roughness of snow surface (m)
+Rain Threshold       = 0.                 # Minimum temperature at which rain 
+					  # occurs (C) minor decrease in snow from 0
+Snow Threshold       = 0.5                # Maximum temperature at which snow 
+					  # occurs (C) 
+Snow Water Capacity  = 0.03               # Snow liquid water holding capacity 
+					  # (fraction)
+Reference Height     = 43.0               # Reference height (m)
+Rain LAI Multiplier  = 0.0001             # LAI Multiplier for rain interception
+Snow LAI Multiplier  = 0.0005             # LAI Mulitplier for snow interception
+Min Intercepted Snow = 0.005              # Intercepted snow that can only be 
+					  # melted (m)
+Outside Basin Value  = 0                  # Value in mask that indicates outside 
+					  # the basin
+Temperature Lapse Rate   = -0.006        # Temperature lapse rate (C/m) 
+Precipitation Lapse Rate =  0.0007      # Precipitation lapse rate (m/m) 
+
+Precipitation Multiplier    = 0.0         # Don't use this.
+Albedo Accumulation Lambda  = 0.92
+Albedo Melting Lambda       = 0.70
+Albedo Accumulation Min     = 0.40
+Albedo Melting Min          = 0.40
+
+################################################################################
+# TERRAIN INFORMATION SECTION
+################################################################################
+[TERRAIN]                                 # Terrain information
+DEM File             = ../arcinfo/rainy30/rainydem.nc # path for DEM file
+Basin Mask File      = ../arcinfo/rainy30/rainymask.nc   # path for mask file
+
+################################################################################
+# ROUTING SECTION
+################################################################################
+[ROUTING]                                 # Routing information. This section is 
+                                          # only relevant if the Extent = BASIN
+
+################ STREAM NETWORK ################################################
+# The following three fields are only used if Flow Routing = NETWORK
+
+Stream Map File      = ../arcinfo/rainy30/stream.map.dat     # path for stream map file 
+Stream Network File  = ../arcinfo/rainy30/stream.network.dat # path for stream network file
+Stream Class File    = ../arcinfo/rainy30/stream.class.dat   # path for stream class file 
+
+Riparian Veg File    = none
+
+################ ROAD NETWORK ##################################################
+# The following three fields are only used if Flow Routing = NETWORK and there
+# is a road network
+
+#Scenario 1 - all existing roads
+#Road Map File        = ../arcinfo/rainy30/road.map.dat      # path for road map file 
+#Road Network File    = ../arcinfo/rainy30/road.network.dat  # path for road network file 
+#Road Class File      = ../arcinfo/rainy30/road.class.dat    # path for road network file 
+
+
+################ UNIT HYDROGRAPH ###############################################
+# The following two fields are only used if Flow Routing = UNIT_HYDROGRAPH
+
+Travel Time File     =                    # path for travel time file
+Unit Hydrograph File =                    # path for unit hydrograph file
+
+################################################################################
+# METEOROLOGY SECTION
+################################################################################
+[METEOROLOGY]                             # Meteorological stations
+Number of Stations = 1                    # Number of meteorological stations
+
+# The following set of lines is to be repeated for each station, with the one 
+# replaced by 2, 3, etc.
+
+Station Name     1 = VIC_84480             # Name for station 1
+North Coordinate 1 = 764833.6              # North coordinate of station 1
+East Coordinate  1 = 395901.0              # East coordinate of station 1
+Elevation        1 = 1286.86             # Elevation of station 1 in m
+Station File     1 = ../metfiles/full_data_47.8125_-121.0625
+
+################ MM5 ###########################################################
+# The following block only needs to be filled out if MM5 = TRUE.  In that case
+# This is the ONLY block that needs to be filled out
+
+MM5 Start              =                  # Start of MM5 file (MM/DD/YYYY-HH),
+MM5 Rows               =
+MM5 Cols               =
+MM5 Extreme North      =
+MM5 Extreme West       = 
+MM5 DY                 =
+
+# MM5 met files
+MM5 Temperature File   = 
+MM5 Humidity File      = 
+MM5 Wind Speed File    = 
+MM5 Shortwave File     = 
+MM5 Longwave File      = 
+MM5 Pressure File      = 
+MM5 Precipitation File = 
+MM5 Terrain File       =
+MM5 Temp Lapse File    =
+
+# For each soil layer make a key-entry pair as below (n = 1, ..,
+# Number of Soil Layers)
+
+MM5 Soil Temperature File 0 = 
+MM5 Soil Temperature File 1 = 
+MM5 Soil Temperature File 2 = 
+
+############### RADAR ##########################################################
+# The following block only needs to be filled out if Precipitation Source = 
+# RADAR.  
+Radar Start            =
+Radar File             =
+Radar Extreme North    =
+Radar Extreme West     =
+Radar Number of Rows   =
+Radar Number of Columns = 
+Radar Grid Spacing     =
+
+################ Wind ##########################################################
+# The following block only needs to be filled out if Wind Source = MODEL
+Number of Wind Maps    =
+Wind File Basename     =
+Wind Map Met Stations  =
+
+################ Precipitation lapse rate ######################################
+# The following block only needs to be filled out if Precipitation lapse rate 
+# = MAP
+Precipitation lapse rate =
+
+################################################################################
+# SOILS INFORMATION SECTION
+################################################################################
+[SOILS]                                   # Soil information
+
+Soil Map File	     = ../arcinfo/rainy30/rainysoil.nc
+
+# minimum depth still 0.1 maximum depth 2
+Soil Depth File      = ../arcinfo/rainy30/soildepth.nc
+
+Number of Soil Types = 25
+
+# From the Forest Service. All other soil types are templates.
+#6   54140  Loamy Sand 		- old number 2
+#7    1327  Loamy Fine Sand	- old number 2
+#10  65340  Sandy Loam 		- old number 3
+#11 129409  Fine Sandy Loam	- old number 3
+#13   8224  Loam 		- old number 6
+#14   4513  Silt Loam		- old number 4
+#22   9608  Organic		- old number 13
+#23   2953  Rock (UWB)		- old number 15
+#24    885  Water		- old number 14
+#25  18724  Rock(frag)
+
+################ SOIL 6 #########################################################
+# old number 2 cod
+Soil Description       6 = LOAMY SAND    
+Lateral Conductivity   6 = 1.0e-3     
+Exponential Decrease   6 = 2.0  
+Maximum Infiltration   6 = 6.0e-5  
+Capillary Drive        6 = 0.07   
+Surface Albedo         6 = 0.1       
+Number of Soil Layers  6 = 3      
+Porosity               6 =  .42 .42 .42
+Pore Size Distribution 6 =  .25 .25 .25
+Bubbling Pressure      6 =  .09 .09 .09
+Field Capacity         6 =  .15 .15 .15
+Wilting Point          6 =  .06 .06 .06
+Bulk Density           6 = 1520. 1520. 1520. 
+Vertical Conductivity  6 = 0.000017 0.000017 0.000017 #1.7e-5
+Thermal Conductivity   6 = 7.114 6.923 7.0
+Thermal Capacity       6 = 1.4e6 1.4e6 1.4e6
+Mannings n             6 = 0.013 #.01-0.016
+Depth Threshold        6 = 0.0
+
+################ SOIL 7 #########################################################
+# old number 2 cod
+Soil Description       7 = LOAMY FINE SAND    
+Lateral Conductivity   7 = 1.0e-3   
+Exponential Decrease   7 = 2.0   
+Maximum Infiltration   7 = 6.0e-5  
+Capillary Drive        7 = 0.07   
+Surface Albedo         7 = 0.1       
+Number of Soil Layers  7 = 3      
+Porosity               7 =  .42 .42 .42
+Pore Size Distribution 7 =  .25 .25 .25
+Bubbling Pressure      7 =  .09 .09 .09
+Field Capacity         7 =  .15 .15 .15
+Wilting Point          7 =  .06 .06 .06
+Bulk Density           7 = 1520. 1520. 1520.
+Vertical Conductivity  7 = 0.000017 0.000017 0.000017 #1.7e-5
+Thermal Conductivity   7 = 7.114 6.923 7.0
+Thermal Capacity       7 = 1.4e6 1.4e6 1.4e6
+Mannings n             7 = 0.013 #0.01-0.016
+Depth Threshold        7 = 0.0
+
+################ SOIL 10 #########################################################
+#old number 3 cod
+Soil Description       10 = SANDY LOAM      
+Lateral Conductivity   10 = 1.0e-3   
+Exponential Decrease   10 = 2.0    
+Maximum Infiltration   10 = 3.0e-5      
+Capillary Drive        10 = 0.13
+Surface Albedo         10 = 0.1       
+Number of Soil Layers  10 = 3       
+Porosity               10 =  .40 .40 .40
+Pore Size Distribution 10 =  .21 .21 .21
+Bubbling Pressure      10 =  .15 .15 .15
+Field Capacity         10 =  .21 .21 .21
+Wilting Point          10 =  .09 .09 .09
+Bulk Density           10 = 1569. 1569. 1569.
+Vertical Conductivity  10 = 0.00008 0.00008 0.00008 #8.0e-5
+Thermal Conductivity   10 = 7.114 6.923 7.0 
+Thermal Capacity       10 = 1.4e6 1.4e6 1.4e6
+Mannings n             10 = 0.016 #0.012-0.033
+Depth Threshold        10 = 0.0
+
+################ SOIL 11 #########################################################
+#old number 3 cod
+Soil Description       11 = FINE SANDY LOAM      
+Lateral Conductivity   11 = 1.0e-3   
+Exponential Decrease   11 = 2.0        
+Maximum Infiltration   11 = 3.0e-5      
+Capillary Drive        11 = 0.13
+Surface Albedo         11 = 0.1       
+Number of Soil Layers  11 = 3       
+Porosity               11 =  .40 .40 .40
+Pore Size Distribution 11 =  .21 .21 .21
+Bubbling Pressure      11 =  .15 .15 .15
+Field Capacity         11 =  .21 .21 .21
+Wilting Point          11 =  .09 .09 .09
+Bulk Density           11 = 1569. 1569. 1569.
+Vertical Conductivity  11 = 0.00008 0.00008 0.00008 #8.0e-5
+Thermal Conductivity   11 = 7.114 6.923 7.0 
+Thermal Capacity       11 = 1.4e6 1.4e6 1.4e6 
+Mannings n             11 = 0.02 #0.012-0.033
+Depth Threshold        11 = 0.0
+
+################ SOIL 13 #########################################################
+# old number 6 cod
+Soil Description       13 = LOAM     
+Lateral Conductivity   13 = 1.0e-3     
+Exponential Decrease   13 = 2.0    
+Maximum Infiltration   13 = 1.0e-5      
+Capillary Drive        13 = 0.11
+Surface Albedo         13 = 0.1       
+Number of Soil Layers  13 = 3       
+Porosity               13 =  .43 .43 .43
+Pore Size Distribution 13 =  .19 .19 .19
+Bubbling Pressure      13 =  .11 .11 .11
+Field Capacity         13 =  .29 .29 .29
+Wilting Point          13 =  .14 .14 .14
+Bulk Density           13 = 1485. 1485. 1485.
+Vertical Conductivity  13 = 0.00004 0.00004 0.00004 #4.0e-5
+Thermal Conductivity   13 = 7.114 6.923 7.0
+Thermal Capacity       13 = 1.4e6 1.4e6 1.4e6 
+Mannings n             13 = 0.02 #0.012-0.033
+Depth Threshold        13 = 0.0
+
+################ SOIL 14 #########################################################
+# old number 4 cod
+Soil Description       14 = SILTY LOAM   
+Lateral Conductivity  14 = 1.0e-3  
+Exponential Decrease   14 = 2.0 
+Maximum Infiltration   14 = 3.0e-5      
+Capillary Drive        14 = 0.20
+Surface Albedo         14 = 0.1       
+Number of Soil Layers  14 = 3       
+Porosity               14 =  .46 .46 .46
+Pore Size Distribution 14 =  .26 .26 .26
+Bubbling Pressure      14 =  .21 .21 .21
+Field Capacity         14 =  .32 .32 .32
+Wilting Point          14 =  .12 .12 .12
+Bulk Density           14 = 1419. 1419. 1419.	
+Vertical Conductivity  14 = 0.000018 0.000018 0.000018 #1.8e-5
+Thermal Conductivity   14 = 7.114 6.923 7.0
+Thermal Capacity       14 = 1.4e6 1.4e6 1.4e6
+Mannings n             14 =  0.02 #0.012-0.033
+Depth Threshold        14 = 0.0
+
+################ SOIL 22 #########################################################
+# old number 13 cod
+Soil Description       22 = ORGANIC (as loam)
+Lateral Conductivity   22 = 1.0e-3    
+Exponential Decrease   22 = 2.0        
+Maximum Infiltration   22 = 1.0e-5
+Capillary Drive        22 = 0.11    
+Surface Albedo         22 = 0.1       
+Number of Soil Layers  22 = 3      
+Porosity               22 =  .43 .43 .43
+Pore Size Distribution 22 =  .19 .19 .19
+Bubbling Pressure      22 =  .11 .11 .11
+Field Capacity         22 =  .29 .29 .29
+Wilting Point          22 =  .14 .14 .14
+Bulk Density           22 = 1485. 1485. 1485.
+Vertical Conductivity  22 = 0.00004 0.00004 0.00004 #4.0e-5
+Thermal Conductivity   22 = 7.114 6.923 7.0
+Thermal Capacity       22 = 1.4e6 1.4e6 1.4e6
+Mannings n             22 = 0.02 #0.012-0.033
+Depth Threshold        22 = 0.0
+
+################ SOIL 23 #########################################################
+# old number 15
+Soil Description       23 = BEDROCK    
+Lateral Conductivity   23 = 1.0e-3  
+Exponential Decrease   23 = 2.0         
+Maximum Infiltration   23 = 1.0e-5
+Capillary Drive        23 = 0.41      
+Surface Albedo         23 = 0.1       
+Number of Soil Layers  23 = 3       
+Porosity               23 =  .1 .1 .1
+Pore Size Distribution 23 =  .08 .08 .08
+Bubbling Pressure      23 =  .36 .36 .36
+Field Capacity         23 =  .05 .05 .05
+Wilting Point          23 =  .04 .04 .04
+Bulk Density           23 = 1650. 1650. 1650.
+Vertical Conductivity  23 = 0.0001 0.0001 0.0001 #1.0e-4
+Thermal Conductivity   23 = 7.114 6.923 7.0 
+Thermal Capacity       23 = 1.4e6 1.4e6 1.4e6
+Mannings n             23 = 0.01
+Depth Threshold        23 = 0.0
+
+################ SOIL 24 #########################################################
+# old number 14 cod
+Soil Description       24 = WATER (as clay)
+Lateral Conductivity   24 = 1.0e-3   
+Exponential Decrease   24 = 2.0    
+Maximum Infiltration   24 = 1.0e-5      
+Capillary Drive        24 = 0.41
+Surface Albedo         24 = 0.1       
+Number of Soil Layers  24 = 3       
+Porosity               24 =  .47 .47 .47
+Pore Size Distribution 24 =  .08 .08 .08
+Bubbling Pressure      24 =  .37 .37 .37
+Field Capacity         24 =  .36 .36 .36
+Wilting Point          24 =  .27 .27 .27
+Bulk Density           24 = 1394. 1394. 1394.
+Vertical Conductivity  24 = 0.00001 0.00001 0.00001# 1e-5
+Thermal Conductivity   24 = 7.114 6.923 7.0
+Thermal Capacity       24 = 1.4e6 1.4e6 1.4e6 
+Mannings n             24 = 0.01
+Depth Threshold        24 = 0.0
+
+################ SOIL 25 #########################################################
+# old number 1 (SAND) cod
+Soil Description       25 = ROCK (frag)
+Lateral Conductivity   25 = 1.0e-3     
+Exponential Decrease   25 = 2.0  
+Maximum Infiltration   25 = 2.0e-4      
+Capillary Drive        25 = 0.07 
+Surface Albedo         25 = 0.1       
+Number of Soil Layers  25 = 3       
+Porosity               25 =  .42 .42 .42
+Pore Size Distribution 25 =  .25 .25 .25
+Bubbling Pressure      25 =  .09 .09 .09
+Field Capacity         25 =  .15 .15 .15
+Wilting Point          25 =  .06 .06 .06
+Bulk Density           25 = 1625. 1625. 1625.
+Vertical Conductivity  25 = 0.00017 0.00017 0.00017 #1.7e-4
+Thermal Conductivity   25 = 7.114  6.923 6.923
+Thermal Capacity       25 = 1.4e6  1.4e6 1.4e6
+Mannings n             25 = 0.013 #.01-0.016
+Depth Threshold        25 = 0.0
+
+################## The following soils are not in the basin #####3###############
+
+################ SOIL 1 #########################################################
+Soil Description       1 = SAND
+Lateral Conductivity   1 = 0.01     
+Exponential Decrease   1 = 1.0       
+Maximum Infiltration   1 = 2.0e-4      
+Capillary Drive        1 = 1.
+Surface Albedo         1 = 0.1       
+Number of Soil Layers  1 = 1       
+Porosity               1 =  .43 
+Pore Size Distribution 1 =  .24 
+Bubbling Pressure      1 =  .07  
+Field Capacity         1 =  .08  
+Wilting Point          1 =  .03  
+Bulk Density           1 = 1492. 
+Vertical Conductivity  1 = 0.01 
+Thermal Conductivity   1 = 7.114
+Thermal Capacity       1 = 1.4e6
+Mannings n             1 = 1.
+Depth Threshold        1 = 0.0
+
+################ SOIL 2 #########################################################
+Soil Description       2 = LOAMY SAND    
+Lateral Conductivity   2 = 0.01     
+Exponential Decrease   2 = 1.0       
+Maximum Infiltration   2 = 6.0e-5  
+Capillary Drive        2 = 1.   
+Surface Albedo         2 = 0.1       
+Number of Soil Layers  2 = 1       
+Porosity               2 =  .42
+Pore Size Distribution 2 =  .25
+Bubbling Pressure      2 =  .09
+Field Capacity         2 =  .15
+Wilting Point          2 =  .06
+Bulk Density           2 = 1520.
+Vertical Conductivity  2 =  0.01
+Thermal Conductivity   2 = 7.114
+Thermal Capacity       2 = 1.4e6
+Mannings n             2 = 1.
+Depth Threshold        2 = 0.0
+
+################ SOIL 3 #########################################################
+Soil Description       3 = SANDY LOAM      
+Lateral Conductivity   3 = 0.01     
+Exponential Decrease   3 = 1.0       
+Maximum Infiltration   3 = 3e-5      
+Capillary Drive        3 = 1.
+Surface Albedo         3 = 0.1       
+Number of Soil Layers  3 = 1       
+Porosity               3 =  .40
+Pore Size Distribution 3 =  .21
+Bubbling Pressure      3 =  .15
+Field Capacity         3 =  .21
+Wilting Point          3 =  .09
+Bulk Density           3 = 1569.
+Vertical Conductivity  3 = 0.01 
+Thermal Conductivity   3 = 7.114 
+Thermal Capacity       3 = 1.4e6 
+Mannings n             3 = 1.
+Depth Threshold        3 = 0.0
+
+################ SOIL 4 #########################################################
+Soil Description       4 = SILTY LOAM   
+Lateral Conductivity   4 = 0.01     
+Exponential Decrease   4 = 1.0       
+Maximum Infiltration   4 = 3e-5      
+Capillary Drive        4 = 1.
+Surface Albedo         4 = 0.1       
+Number of Soil Layers  4 = 1       
+Porosity               4 =  .46
+Pore Size Distribution 4 =  .26
+Bubbling Pressure      4 =  .21
+Field Capacity         4 =  .32
+Wilting Point          4 =  .12 
+Bulk Density           4 = 1419.
+Vertical Conductivity  4 =  0.01
+Thermal Conductivity   4 = 7.114
+Thermal Capacity       4 = 1.4e6
+Mannings n             4 = 1.
+Depth Threshold        4 = 0.0
+
+################ SOIL 5 #########################################################
+Soil Description       5 = SILT
+Lateral Conductivity   5 = 0.01     
+Exponential Decrease   5 = 1.0       
+Maximum Infiltration   5 = 3e-5
+Capillary Drive        5 = 1.      
+Surface Albedo         5 = 0.1       
+Number of Soil Layers  5 = 1       
+Porosity               5 =  .52
+Pore Size Distribution 5 =  .33
+Bubbling Pressure      5 =  .25
+Field Capacity         5 =  .28
+Wilting Point          5 =  .08
+Bulk Density           5 = 1280.
+Vertical Conductivity  5 =  0.01 
+Thermal Conductivity   5 = 7.114 
+Thermal Capacity       5 = 1.4e6 
+Mannings n             5 = 1.
+Depth Threshold        5 = 0.0
+
+################ SOIL 8 #########################################################
+Soil Description       8 = SILTY CLAY LOAM      
+Lateral Conductivity   8 = 0.01     
+Exponential Decrease   8 = 1.0       
+Maximum Infiltration   8 = 3e-5      
+Capillary Drive        8 = 1.
+Surface Albedo         8 = 0.1       
+Number of Soil Layers  8 = 1       
+Porosity               8 =  .48
+Pore Size Distribution 8 =  .13
+Bubbling Pressure      8 =  .34
+Field Capacity         8 =  .36
+Wilting Point          8 =  .21
+Bulk Density           8 = 1381.
+Vertical Conductivity  8 =  0.01
+Thermal Conductivity   8 = 7.114
+Thermal Capacity       8 = 1.4e6
+Mannings n             8 = 1.
+Depth Threshold        8 = 0.0
+
+################ SOIL 9 #########################################################
+Soil Description       9 = CLAY LOAM      
+Lateral Conductivity   9 = 0.01     
+Exponential Decrease   9 = 1.0       
+Maximum Infiltration   9 = 1e-5      
+Capillary Drive        9 = 1.
+Surface Albedo         9 = 0.1       
+Number of Soil Layers  9 = 1       
+Porosity               9 =  .46
+Pore Size Distribution 9 =  .12
+Bubbling Pressure      9 =  .26
+Field Capacity         9 =  .31
+Wilting Point          9 =  .23
+Bulk Density           9 = 1600.
+Vertical Conductivity  9 =  0.01
+Thermal Conductivity   9 = 7.114
+Thermal Capacity       9 = 1.4e6
+Mannings n             9 = 1.
+Depth Threshold        9 = 0.0
+
+################ SOIL 12 #########################################################
+Soil Description       12 = CLAY
+Lateral Conductivity   12 = 0.01     
+Exponential Decrease   12 = 1.0       
+Maximum Infiltration   12 = 1e-5
+Capillary Drive        12 = 1.      
+Surface Albedo         12 = 0.1       
+Number of Soil Layers  12 = 1      
+Porosity               12 =  .47 
+Pore Size Distribution 12 =  .08 
+Bubbling Pressure      12 =  .37 
+Field Capacity         12 =  .36 
+Wilting Point          12 =  .27 
+Bulk Density           12 = 1394.
+Vertical Conductivity  12 =  0.01 
+Thermal Conductivity   12 = 7.114 
+Thermal Capacity       12 = 1.4e6 
+Mannings n             12 = 1.
+Depth Threshold        12 = 0.0
+
+################ SOIL 15 #########################################################
+Soil Description       15 = BEDROCK   
+Lateral Conductivity   15 = 0.01
+Exponential Decrease   15 = 1.0       
+Maximum Infiltration   15 = 1e-5
+Capillary Drive        15 = 1.      
+Surface Albedo         15 = 0.1       
+Number of Soil Layers  15 = 1      
+Porosity               15 =  .1 
+Pore Size Distribution 15 =  .08 
+Bubbling Pressure      15 =  .36 
+Field Capacity         15 =  .05 
+Wilting Point          15 =  .04 
+Bulk Density           15 = 1650.
+Vertical Conductivity  15 =  0.01
+Thermal Conductivity   15 = 7.114
+Thermal Capacity       15 = 1.4e6
+Mannings n             15 = 0.012
+Depth Threshold        15 = 0.0
+
+################ SOIL 16 #########################################################
+Soil Description       16 = OTHER (as SCL)
+Lateral Conductivity   16 = 0.01     
+Exponential Decrease   16 = 1.0       
+Maximum Infiltration   16 = 1e-5
+Capillary Drive        16 = 1.      
+Surface Albedo         16 = 0.1       
+Number of Soil Layers  16 = 1       
+Porosity               16 =  .39 
+Pore Size Distribution 16 =  .12 
+Bubbling Pressure      16 =  .29 
+Field Capacity         16 =  .27 
+Wilting Point          16 =  .17 
+Bulk Density           16 = 1600.
+Vertical Conductivity  16 =  0.01
+Thermal Conductivity   16 = 7.114
+Thermal Capacity       16 = 1.4e6
+Mannings n             16 = 1.
+Depth Threshold        16 = 0.0
+
+################ SOIL 17 #########################################################
+# old number 1
+Soil Description       17 = blank1
+Lateral Conductivity   17 = 0.01     
+Exponential Decrease   17 = 1.0       
+Maximum Infiltration   17 = 2.0e-4      
+Capillary Drive        17 = 1.
+Surface Albedo         17 = 0.1       
+Number of Soil Layers  17 = 1       
+Porosity               17 =  .43 
+Pore Size Distribution 17 =  .24 
+Bubbling Pressure      17 =  .07 
+Field Capacity         17 =  .08 
+Wilting Point          17 =  .03 
+Bulk Density           17 = 1492.
+Vertical Conductivity  17 = 0.01 
+Thermal Conductivity   17 = 7.114
+Thermal Capacity       17 = 1.4e6
+Mannings n             17 = 1.
+Depth Threshold        17 = 0.0
+
+################ SOIL 18 #########################################################
+# old number 1
+Soil Description       18 = blank2
+Lateral Conductivity   18 = 0.01     
+Exponential Decrease   18 = 1.0       
+Maximum Infiltration   18 = 2.0e-4      
+Capillary Drive        18 = 1.
+Surface Albedo         18 = 0.1       
+Number of Soil Layers  18 = 1       
+Porosity               18 =  .43 
+Pore Size Distribution 18 =  .24 
+Bubbling Pressure      18 =  .07 
+Field Capacity         18 =  .08 
+Wilting Point          18 =  .03 
+Bulk Density           18 = 1492.
+Vertical Conductivity  18 = 0.01 
+Thermal Conductivity   18 = 7.114
+Thermal Capacity       18 = 1.4e6
+Mannings n             18 = 1.
+Depth Threshold        18 = 0.0
+
+################ SOIL 19 #########################################################
+# old number 1
+Soil Description       19 = blank3
+Lateral Conductivity   19 = 0.01     
+Exponential Decrease   19 = 1.0       
+Maximum Infiltration   19 = 2.0e-4      
+Capillary Drive        19 = 1.
+Surface Albedo         19 = 0.1       
+Number of Soil Layers  19 = 1       
+Porosity               19 =  .43
+Pore Size Distribution 19 =  .24
+Bubbling Pressure      19 =  .07
+Field Capacity         19 =  .08
+Wilting Point          19 =  .03
+Bulk Density           19 = 1492.
+Vertical Conductivity  19 = 0.01 
+Thermal Conductivity   19 = 7.114
+Thermal Capacity       19 = 1.4e6
+Mannings n             19 = 1.
+Depth Threshold        19 = 0.0
+
+################ SOIL 20 #########################################################
+# old number 1
+Soil Description       20 = blank4
+Lateral Conductivity   20 = 0.01     
+Exponential Decrease   20 = 1.0       
+Maximum Infiltration   20 = 2.0e-4      
+Capillary Drive        20 = 1.
+Surface Albedo         20 = 0.1       
+Number of Soil Layers  20 = 1       
+Porosity               20 =  .43
+Pore Size Distribution 20 =  .24
+Bubbling Pressure      20 =  .07
+Field Capacity         20 =  .08
+Wilting Point          20 =  .03
+Bulk Density           20 = 1492.
+Vertical Conductivity  20 = 0.01 
+Thermal Conductivity   20 = 7.114
+Thermal Capacity       20 = 1.4e6
+Mannings n             20 = 1.
+Depth Threshold        20 = 0.0
+
+################ SOIL 21 #########################################################
+# old number 1
+Soil Description       21 = blank5
+Lateral Conductivity   21 = 0.01     
+Exponential Decrease   21 = 1.0       
+Maximum Infiltration   21 = 2.0e-4      
+Capillary Drive        21 = 1.
+Surface Albedo         21 = 0.1       
+Number of Soil Layers  21 = 1       
+Porosity               21 =  .43 
+Pore Size Distribution 21 =  .24 
+Bubbling Pressure      21 =  .07 
+Field Capacity         21 =  .08 
+Wilting Point          21 =  .03 
+Bulk Density           21 = 1492.
+Vertical Conductivity  21 = 0.01 
+Thermal Conductivity   21 = 7.114
+Thermal Capacity       21 = 1.4e6
+Mannings n             21 = 1.
+Depth Threshold        21 = 0.0
+
+################################################################################
+# VEGETATION INFORMATION SECTION
+################################################################################
+[VEGETATION]
+
+Vegetation Map File        = ../arcinfo/rainy30/rc_veg.nc
+Number of Vegetation Types = 34
+
+# From the Forest Service. All other veg types are templates.
+#1       COLD_int1 	- old number 1,3,16-18
+#2       COLD_int2 	- old number 1,3,16-18
+#3       COLD_int3 	- old number 1,3,16-18
+#4       COOL_int1	- old number 1,3,16-18
+#5       COOL_int2	- old number 1,3,16-18
+#6       COOL_int3	- old number 1,3,16-18
+#7       COOL_of3	- old number 1,3,16-18
+#8       DRY_int1	- old number 1,3,16-18
+#9       DRY_int2	- old number 1,3,16-18
+#10      DRY_int3	- old number 1,3,16-18
+#11      DRY_ofms2	- old number 1,3,16-18
+#12      DRY_ofms3	- old number 1,3,16-18
+#14      DRY_ofss2	- old number 1,3,16-18
+#15      DRY_ofss3	- old number 1,3,16-18
+#16      Forest_si1	- old number 1,3,16-18
+#17      Forest_si2	- old number 1,3,16-18
+#18      Forest_si3	- old number 1,3,16-18
+#19      HDWD1		- old number 4
+#20      HDWD2		- old number 4
+#21      HDWD3		- old number 4
+#22      MOIST_int1	- old number 1,3,16-18
+#23      MOIST_int2	- old number 1,3,16-18
+#24      MOIST_int3	- old number 1,3,16-18
+#26      MOIST_ofms3	- old number 1,3,16-18
+#27      MOIST_ofss2	- old number 1,3,16-18
+#29      agriculture	- old number 11
+#30      grassland	- old number 10
+#31      shrubland	- old number 8 or 9
+#32      water		- old number 14
+#33      rock		- old number 14,20
+#34      barren		- old number 12
+
+# Impervious Fraction = 0.0
+# RPC = 10 W/sqm
+# snow interception eff = 0.6
+# mass release drip ration = 0.4
+# other values come from old number
+
+################ VEGETATION 1 ##################################################
+Vegetation Description   1 = COLD_int1
+Overstory Present        1 = TRUE
+Understory Present       1 = TRUE
+Fractional Coverage      1 = 0.20
+Trunk Space              1 = 0.38 
+Aerodynamic Attenuation  1 = 2.0
+Radiation Attenuation    1 = 0.15
+Hemi Fract Coverage      1 =
+Clumping Factor          1 =
+Leaf Angle A             1 =
+Leaf Angle B             1 =
+Scattering Parameter     1 =
+Max Snow Int Capacity    1 = 0.02
+Mass Release Drip Ratio  1 = 0.4
+Snow Interception Eff    1 = 0.6
+Impervious Fraction      1 = 0.0 
+Height                   1 = 10.10 0.5
+Maximum Resistance       1 = 5000.0 3000.0
+Minimum Resistance       1 = 666.6 200.0
+Moisture Threshold       1 = 0.33 0.13
+Vapor Pressure Deficit   1 = 4000.0 4000.0
+Rpc                      1 = 10 10 
+Number of Root Zones     1 = 3
+Root Zone Depths         1 = 0.06 0.13 0.21
+Overstory Root Fraction  1 = 0.20 0.40 0.40    
+Understory Root Fraction 1 = 0.40 0.60 0.00 
+Overstory Monthly LAI    1 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Understory Monthly LAI   1 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    1 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   1 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 2 ##################################################
+Vegetation Description   2 = COLD_int2
+Overstory Present        2 = TRUE
+Understory Present       2 = TRUE
+Fractional Coverage      2 = 0.51
+Trunk Space              2 = 0.38 
+Aerodynamic Attenuation  2 = 2.0
+Radiation Attenuation    2 = 0.15
+Hemi Fract Coverage      2 =
+Clumping Factor          2 =
+Leaf Angle A             2 =
+Leaf Angle B             2 =
+Scattering Parameter     2 =
+Max Snow Int Capacity    2 = 0.02
+Mass Release Drip Ratio  2 = 0.4
+Snow Interception Eff    2 = 0.6
+Impervious Fraction      2 = 0.0 
+Height                   2 = 12.40 0.5 
+Maximum Resistance       2 = 5000.0 3000.0
+Minimum Resistance       2 = 666.6 200.0
+Moisture Threshold       2 = 0.33 0.13
+Vapor Pressure Deficit   2 = 4000.0 4000.0
+Rpc                      2 = 10 10 
+Number of Root Zones     2 = 3
+Root Zone Depths         2 = 0.06 0.13 0.21
+Overstory Root Fraction  2 = 0.20 0.40 0.40    
+Understory Root Fraction 2 = 0.40 0.60 0.00 
+Overstory Monthly LAI    2 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Understory Monthly LAI   2 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    2 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   2 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 3 ##################################################
+Vegetation Description   3 = COLD_int3
+Overstory Present        3 = TRUE
+Understory Present       3 = TRUE
+Fractional Coverage      3 = 0.89
+Trunk Space              3 = 0.38
+Aerodynamic Attenuation  3 = 2.0
+Radiation Attenuation    3 = 0.15
+Hemi Fract Coverage      3 =
+Clumping Factor          3 =
+Leaf Angle A             3 =
+Leaf Angle B             3 =
+Scattering Parameter     3 =
+Max Snow Int Capacity    3 = 0.02
+Mass Release Drip Ratio  3 = 0.4
+Snow Interception Eff    3 = 0.6
+Impervious Fraction      3 = 0.0 
+Height                   3 = 14.90 0.5 
+Maximum Resistance       3 = 5000.0 3000.0
+Minimum Resistance       3 = 666.6 200.0
+Moisture Threshold       3 = 0.33 0.13
+Vapor Pressure Deficit   3 = 4000.0 4000.0
+Rpc                      3 = 10 10 
+Number of Root Zones     3 = 3
+Root Zone Depths         3 = 0.06 0.13 0.21
+Overstory Root Fraction  3 = 0.20 0.40 0.40    
+Understory Root Fraction 3 = 0.40 0.60 0.00 
+Overstory Monthly LAI    3 = 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0
+Understory Monthly LAI   3 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    3 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   3 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 4 ##################################################
+Vegetation Description   4 = COOL_int1
+Overstory Present        4 = TRUE
+Understory Present       4 = TRUE
+Fractional Coverage      4 = 0.27
+Trunk Space              4 = 0.27 
+Aerodynamic Attenuation  4 = 2.0
+Radiation Attenuation    4 = 0.15
+Hemi Fract Coverage      4 =
+Clumping Factor          4 =
+Leaf Angle A             4 =
+Leaf Angle B             4 =
+Scattering Parameter     4 =
+Max Snow Int Capacity    4 = 0.02
+Mass Release Drip Ratio  4 = 0.4
+Snow Interception Eff    4 = 0.6
+Impervious Fraction      4 = 0.0 
+Height                   4 = 16.80 0.5
+Maximum Resistance       4 = 5000.0 3000.0
+Minimum Resistance       4 = 666.6 200.0
+Moisture Threshold       4 = 0.33 0.13
+Vapor Pressure Deficit   4 = 4000.0 4000.0
+Rpc                      4 = 10 10 
+Number of Root Zones     4 = 3
+Root Zone Depths         4 = 0.06 0.13 0.21
+Overstory Root Fraction  4 = 0.20 0.40 0.40    
+Understory Root Fraction 4 = 0.40 0.60 0.00 
+Overstory Monthly LAI    4 = 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0
+Understory Monthly LAI   4 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    4 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   4 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 5 ##################################################
+Vegetation Description   5 = COOL_int2
+Overstory Present        5 = TRUE
+Understory Present       5 = TRUE
+Fractional Coverage      5 = 0.53
+Trunk Space              5 = 0.27 
+Aerodynamic Attenuation  5 = 2.0
+Radiation Attenuation    5 = 0.15
+Hemi Fract Coverage      5 =
+Clumping Factor          5 =
+Leaf Angle A             5 =
+Leaf Angle B             5 =
+Scattering Parameter     5 =
+Max Snow Int Capacity    5 = 0.02
+Mass Release Drip Ratio  5 = 0.4
+Snow Interception Eff    5 = 0.6
+Impervious Fraction      5 = 0.0 
+Height                   5 = 16.40 0.5 
+Maximum Resistance       5 = 5000.0 3000.0
+Minimum Resistance       5 = 666.6 200.0
+Moisture Threshold       5 = 0.33 0.13
+Vapor Pressure Deficit   5 = 4000.0 4000.0
+Rpc                      5 = 10 10 
+Number of Root Zones     5 = 3
+Root Zone Depths         5 = 0.06 0.13 0.21
+Overstory Root Fraction  5 = 0.20 0.40 0.40    
+Understory Root Fraction 5 = 0.40 0.60 0.00 
+Overstory Monthly LAI    5 = 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0
+Understory Monthly LAI   5 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    5 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   5 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 6 ##################################################
+Vegetation Description   6 = COOL_int3
+Overstory Present        6 = TRUE
+Understory Present       6 = TRUE
+Fractional Coverage      6 = 0.76
+Trunk Space              6 = 0.27 
+Aerodynamic Attenuation  6 = 2.0
+Radiation Attenuation    6 = 0.15
+Hemi Fract Coverage      6 =
+Clumping Factor          6 =
+Leaf Angle A             6 =
+Leaf Angle B             6 =
+Scattering Parameter     6 =
+Max Snow Int Capacity    6 = 0.02
+Mass Release Drip Ratio  6 = 0.4
+Snow Interception Eff    6 = 0.6
+Impervious Fraction      6 = 0.0 
+Height                   6 = 11.50 0.5 
+Maximum Resistance       6 = 5000.0 3000.0
+Minimum Resistance       6 = 666.6 200.0
+Moisture Threshold       6 = 0.33 0.13
+Vapor Pressure Deficit   6 = 4000.0 4000.0
+Rpc                      6 = 10 10 
+Number of Root Zones     6 = 3
+Root Zone Depths         6 = 0.06 0.13 0.21
+Overstory Root Fraction  6 = 0.20 0.40 0.40    
+Understory Root Fraction 6 = 0.40 0.60 0.00 
+Overstory Monthly LAI    6 = 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0
+Understory Monthly LAI   6 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    6 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   6 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 7 ##################################################
+Vegetation Description   7 = COOL_of3
+Overstory Present        7 = TRUE
+Understory Present       7 = TRUE
+Fractional Coverage      7 = 0.75
+Trunk Space              7 = 0.34 
+Aerodynamic Attenuation  7 = 2.0
+Radiation Attenuation    7 = 0.15
+Hemi Fract Coverage      7 =
+Clumping Factor          7 =
+Leaf Angle A             7 =
+Leaf Angle B             7 =
+Scattering Parameter     7 =
+Max Snow Int Capacity    7 = 0.04
+Mass Release Drip Ratio  7 = 0.4
+Snow Interception Eff    7 = 0.6
+Impervious Fraction      7 = 0.0 
+Height                   7 = 21.20 0.5 
+Maximum Resistance       7 = 5000.0 3000.0
+Minimum Resistance       7 = 666.6 200.0
+Moisture Threshold       7 = 0.33 0.13
+Vapor Pressure Deficit   7 = 4000.0 4000.0
+Rpc                      7 = 10 10 
+Number of Root Zones     7 = 3
+Root Zone Depths         7 = 0.06 0.13 0.21
+Overstory Root Fraction  7 = 0.20 0.40 0.40    
+Understory Root Fraction 7 = 0.40 0.60 0.00 
+Overstory Monthly LAI    7 = 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0
+Understory Monthly LAI   7 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    7 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   7 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 8 ##################################################
+Vegetation Description   8 = DRY_int1
+Overstory Present        8 = TRUE
+Understory Present       8 = TRUE
+Fractional Coverage      8 = 0.26
+Trunk Space              8 = 0.33 
+Aerodynamic Attenuation  8 = 2.0
+Radiation Attenuation    8 = 0.15
+Hemi Fract Coverage      8 =
+Clumping Factor          8 =
+Leaf Angle A             8 =
+Leaf Angle B             8 =
+Scattering Parameter     8 =
+Max Snow Int Capacity    8 = 0.02
+Mass Release Drip Ratio  8 = 0.4
+Snow Interception Eff    8 = 0.6
+Impervious Fraction      8 = 0.0 
+Height                   8 = 17.60 0.5 
+Maximum Resistance       8 = 5000.0 3000.0
+Minimum Resistance       8 = 666.6 200.0
+Moisture Threshold       8 = 0.33 0.13
+Vapor Pressure Deficit   8 = 4000.0 4000.0
+Rpc                      8 = 10 10 
+Number of Root Zones     8 = 3
+Root Zone Depths         8 = 0.06 0.13 0.21
+Overstory Root Fraction  8 = 0.20 0.40 0.40    
+Understory Root Fraction 8 = 0.40 0.60 0.00 
+Overstory Monthly LAI    8 = 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0
+Understory Monthly LAI   8 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    8 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   8 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 9 ##################################################
+Vegetation Description   9 = DRY_int2
+Overstory Present        9 = TRUE
+Understory Present       9 = TRUE
+Fractional Coverage      9 = 0.51
+Trunk Space              9 = 0.33 
+Aerodynamic Attenuation  9 = 2.0
+Radiation Attenuation    9 = 0.15
+Hemi Fract Coverage      9 =
+Clumping Factor          9 =
+Leaf Angle A             9 =
+Leaf Angle B             9 =
+Scattering Parameter     9 =
+Max Snow Int Capacity    9 = 0.02
+Mass Release Drip Ratio  9 = 0.4
+Snow Interception Eff    9 = 0.6
+Impervious Fraction      9 = 0.0 
+Height                   9 = 17.70 0.5 
+Maximum Resistance       9 = 5000.0 3000.0
+Minimum Resistance       9 = 666.6 200.0
+Moisture Threshold       9 = 0.33 0.13
+Vapor Pressure Deficit   9 = 4000.0 4000.0
+Rpc                      9 = 10 10 
+Number of Root Zones     9 = 3
+Root Zone Depths         9 = 0.06 0.13 0.21
+Overstory Root Fraction  9 = 0.20 0.40 0.40    
+Understory Root Fraction 9 = 0.40 0.60 0.00 
+Overstory Monthly LAI    9 = 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0
+Understory Monthly LAI   9 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    9 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   9 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 10 #################################################
+Vegetation Description   10 = DRY_int3
+Overstory Present        10 = TRUE
+Understory Present       10 = TRUE
+Fractional Coverage      10 = 0.86
+Trunk Space              10 = 0.33 
+Aerodynamic Attenuation  10 = 2.0
+Radiation Attenuation    10 = 0.15
+Hemi Fract Coverage      10 =
+Clumping Factor          10 =
+Leaf Angle A             10 =
+Leaf Angle B             10 =
+Scattering Parameter     10 =
+Max Snow Int Capacity    10 = 0.02
+Mass Release Drip Ratio  10 = 0.4
+Snow Interception Eff    10 = 0.6
+Impervious Fraction      10 = 0.0 
+Height                   10 = 13.60 0.5 
+Maximum Resistance       10 = 5000.0 3000.0
+Minimum Resistance       10 = 666.6 200.0
+Moisture Threshold       10 = 0.33 0.13
+Vapor Pressure Deficit   10 = 4000.0 4000.0
+Rpc                      10 = 10 10 
+Number of Root Zones     10 = 3
+Root Zone Depths         10 = 0.06 0.13 0.21
+Overstory Root Fraction  10 = 0.20 0.40 0.40    
+Understory Root Fraction 10 = 0.40 0.60 0.00 
+Overstory Monthly LAI    10 = 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0
+Understory Monthly LAI   10 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    10 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   10 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 11 #################################################
+Vegetation Description   11 = DRY_ofms2
+Overstory Present        11 = TRUE
+Understory Present       11 = TRUE
+Fractional Coverage      11 = 0.60
+Trunk Space              11 = 0.32 
+Aerodynamic Attenuation  11 = 2.0
+Radiation Attenuation    11 = 0.15
+Hemi Fract Coverage      11 =
+Clumping Factor          11 =
+Leaf Angle A             11 =
+Leaf Angle B             11 =
+Scattering Parameter     11 =
+Max Snow Int Capacity    11 = 0.04
+Mass Release Drip Ratio  11 = 0.4
+Snow Interception Eff    11 = 0.6
+Impervious Fraction      11 = 0.0 
+Height                   11 = 29.50 0.5 
+Maximum Resistance       11 = 5000.0 3000.0
+Minimum Resistance       11 = 666.6 200.0
+Moisture Threshold       11 = 0.33 0.13
+Vapor Pressure Deficit   11 = 4000.0 4000.0
+Rpc                      11 = 10 10 
+Number of Root Zones     11 = 3
+Root Zone Depths         11 = 0.06 0.13 0.21
+Overstory Root Fraction  11 = 0.20 0.40 0.40    
+Understory Root Fraction 11 = 0.40 0.60 0.00 
+Overstory Monthly LAI    11 = 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0
+Understory Monthly LAI   11 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    11 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   11 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 12 #################################################
+Vegetation Description   12 = DRY_ofms3
+Overstory Present        12 = TRUE
+Understory Present       12 = TRUE
+Fractional Coverage      12 = 0.85
+Trunk Space              12 = 0.32 
+Aerodynamic Attenuation  12 = 2.0
+Radiation Attenuation    12 = 0.15
+Hemi Fract Coverage      12 =
+Clumping Factor          12 =
+Leaf Angle A             12 =
+Leaf Angle B             12 =
+Scattering Parameter     12 =
+Max Snow Int Capacity    12 = 0.04
+Mass Release Drip Ratio  12 = 0.4
+Snow Interception Eff    12 = 0.6
+Impervious Fraction      12 = 0.0 
+Height                   12 = 22.80 0.5 
+Maximum Resistance       12 = 5000.0 3000.0
+Minimum Resistance       12 = 666.6 200.0
+Moisture Threshold       12 = 0.33 0.13
+Vapor Pressure Deficit   12 = 4000.0 4000.0
+Rpc                      12 = 10 10 
+Number of Root Zones     12 = 3
+Root Zone Depths         12 = 0.06 0.13 0.21
+Overstory Root Fraction  12 = 0.20 0.40 0.40    
+Understory Root Fraction 12 = 0.40 0.60 0.00 
+Overstory Monthly LAI    12 = 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0
+Understory Monthly LAI   12 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    12 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   12 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 13 #################################################
+Vegetation Description   13 = DRY_ofss1
+Overstory Present        13 = TRUE
+Understory Present       13 = TRUE
+Fractional Coverage      13 = 0.30
+Trunk Space              13 = 0.36 
+Aerodynamic Attenuation  13 = 2.0
+Radiation Attenuation    13 = 0.15
+Hemi Fract Coverage      13 =
+Clumping Factor          13 =
+Leaf Angle A             13 =
+Leaf Angle B             13 =
+Scattering Parameter     13 =
+Max Snow Int Capacity    13 = 0.04
+Mass Release Drip Ratio  13 = 0.4
+Snow Interception Eff    13 = 0.6
+Impervious Fraction      13 = 0.0 
+Height                   13 = 33.00 0.5 
+Maximum Resistance       13 = 5000.0 3000.0
+Minimum Resistance       13 = 666.6 200.0
+Moisture Threshold       13 = 0.33 0.13
+Vapor Pressure Deficit   13 = 4000.0 4000.0
+Rpc                      13 = 10 10 
+Number of Root Zones     13 = 3
+Root Zone Depths         13 = 0.06 0.13 0.21
+Overstory Root Fraction  13 = 0.20 0.40 0.40    
+Understory Root Fraction 13 = 0.40 0.60 0.00 
+Overstory Monthly LAI    13 = 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0
+Understory Monthly LAI   13 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    13 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   13 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 14 #################################################
+Vegetation Description   14 = DRY_ofss2
+Overstory Present        14 = TRUE
+Understory Present       14 = TRUE
+Fractional Coverage      14 = 0.55
+Trunk Space              14 = 0.36 
+Aerodynamic Attenuation  14 = 2.0
+Radiation Attenuation    14 = 0.15
+Hemi Fract Coverage      14 =
+Clumping Factor          14 =
+Leaf Angle A             14 =
+Leaf Angle B             14 =
+Scattering Parameter     14 =
+Max Snow Int Capacity    14 = 0.04
+Mass Release Drip Ratio  14 = 0.4
+Snow Interception Eff    14 = 0.6
+Impervious Fraction      14 = 0.0 
+Height                   14 = 29.50 0.5 
+Maximum Resistance       14 = 5000.0 3000.0
+Minimum Resistance       14 = 666.6 200.0
+Moisture Threshold       14 = 0.33 0.13
+Vapor Pressure Deficit   14 = 4000.0 4000.0
+Rpc                      14 = 10 10 
+Number of Root Zones     14 = 3
+Root Zone Depths         14 = 0.06 0.13 0.21
+Overstory Root Fraction  14 = 0.20 0.40 0.40    
+Understory Root Fraction 14 = 0.40 0.60 0.00 
+Overstory Monthly LAI    14 = 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0
+Understory Monthly LAI   14 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    14 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   14 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 15 #################################################
+Vegetation Description   15 = DRY_ofss3
+Overstory Present        15 = TRUE
+Understory Present       15 = TRUE
+Fractional Coverage      15 = 0.79
+Trunk Space              15 = 0.36 
+Aerodynamic Attenuation  15 = 2.0
+Radiation Attenuation    15 = 0.15
+Hemi Fract Coverage      15 =
+Clumping Factor          15 =
+Leaf Angle A             15 =
+Leaf Angle B             15 =
+Scattering Parameter     15 =
+Max Snow Int Capacity    15 = 0.04
+Mass Release Drip Ratio  15 = 0.4
+Snow Interception Eff    15 = 0.6
+Impervious Fraction      15 = 0.0 
+Height                   15 = 29.90 0.5 
+Maximum Resistance       15 = 5000.0 3000.0
+Minimum Resistance       15 = 666.6 200.0
+Moisture Threshold       15 = 0.33 0.13
+Vapor Pressure Deficit   15 = 4000.0 4000.0
+Rpc                      15 = 10 10 
+Number of Root Zones     15 = 3
+Root Zone Depths         15 = 0.06 0.13 0.21
+Overstory Root Fraction  15 = 0.20 0.40 0.40    
+Understory Root Fraction 15 = 0.40 0.60 0.00 
+Overstory Monthly LAI    15 = 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0
+Understory Monthly LAI   15 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    15 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   15 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 16 #################################################
+Vegetation Description   16 = Forest_si1
+Overstory Present        16 = TRUE
+Understory Present       16 = TRUE
+Fractional Coverage      16 = 0.19
+Trunk Space              16 = 0.26 
+Aerodynamic Attenuation  16 = 2.0
+Radiation Attenuation    16 = 0.15
+Hemi Fract Coverage      16 =
+Clumping Factor          16 =
+Leaf Angle A             16 =
+Leaf Angle B             16 =
+Scattering Parameter     16 =
+Max Snow Int Capacity    16 = 0.02
+Mass Release Drip Ratio  16 = 0.4
+Snow Interception Eff    16 = 0.6
+Impervious Fraction      16 = 0.0 
+Height                   16 = 9.30 0.5
+Maximum Resistance       16 = 5000.0 3000.0
+Minimum Resistance       16 = 666.6 200.0
+Moisture Threshold       16 = 0.33 0.13 
+Vapor Pressure Deficit   16 = 4000.0 4000.0
+Rpc                      16 = 10 10 
+Number of Root Zones     16 = 3
+Root Zone Depths         16 = 0.06 0.13 0.21
+Overstory Root Fraction  16 = 0.20 0.40 0.40    
+Understory Root Fraction 16 = 0.40 0.60 0.00 
+Overstory Monthly LAI    16 = 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0
+Understory Monthly LAI   16 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    16 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   16 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 17 #################################################
+Vegetation Description   17 = Forest_si2
+Overstory Present        17 = TRUE
+Understory Present       17 = TRUE
+Fractional Coverage      17 = 0.50
+Trunk Space              17 = 0.26 
+Aerodynamic Attenuation  17 = 2.0
+Radiation Attenuation    17 = 0.15
+Hemi Fract Coverage      17 =
+Clumping Factor          17 =
+Leaf Angle A             17 =
+Leaf Angle B             17 =
+Scattering Parameter     17 =
+Max Snow Int Capacity    17 = 0.02
+Mass Release Drip Ratio  17 = 0.4
+Snow Interception Eff    17 = 0.6
+Impervious Fraction      17 = 0.0 
+Height                   17 = 7.9 0.5 
+Maximum Resistance       17 = 5000.0 3000.0
+Minimum Resistance       17 = 666.6 200.0
+Moisture Threshold       17 = 0.33 0.13 
+Vapor Pressure Deficit   17 = 4000.0 4000.0
+Rpc                      17 = 10 10 
+Number of Root Zones     17 = 3
+Root Zone Depths         17 = 0.06 0.13 0.21
+Overstory Root Fraction  17 = 0.20 0.40 0.40    
+Understory Root Fraction 17 = 0.40 0.60 0.00 
+Overstory Monthly LAI    17 = 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0
+Understory Monthly LAI   17 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    17 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   17 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 18 #################################################
+Vegetation Description   18 = Forest_si3
+Overstory Present        18 = TRUE
+Understory Present       18 = TRUE
+Fractional Coverage      18 = 0.87
+Trunk Space              18 = 0.26 
+Aerodynamic Attenuation  18 = 2.0
+Radiation Attenuation    18 = 0.15
+Hemi Fract Coverage      18 =
+Clumping Factor          18 =
+Leaf Angle A             18 =
+Leaf Angle B             18 =
+Scattering Parameter     18 =
+Max Snow Int Capacity    18 = 0.02
+Mass Release Drip Ratio  18 = 0.4
+Snow Interception Eff    18 = 0.6
+Impervious Fraction      18 = 0.0 
+Height                   18 = 7.10 0.5 
+Maximum Resistance       18 = 5000.0 3000.0
+Minimum Resistance       18 = 666.6 200.0
+Moisture Threshold       18 = 0.33 0.13 
+Vapor Pressure Deficit   18 = 4000.0 4000.0
+Rpc                      18 = 10 10 
+Number of Root Zones     18 = 3
+Root Zone Depths         18 = 0.06 0.13 0.21
+Overstory Root Fraction  18 = 0.20 0.40 0.40    
+Understory Root Fraction 18 = 0.40 0.60 0.00 
+Overstory Monthly LAI    18 = 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0
+Understory Monthly LAI   18 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    18 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   18 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 19 #################################################
+Vegetation Description   19 = HDWD1
+Overstory Present        19 = TRUE
+Understory Present       19 = TRUE
+Fractional Coverage      19 = 0.25
+Trunk Space              19 = 0.38 
+Aerodynamic Attenuation  19 = 1.5
+Radiation Attenuation    19 = 0.2
+Hemi Fract Coverage      19 =
+Clumping Factor          19 =
+Leaf Angle A             19 =
+Leaf Angle B             19 =
+Scattering Parameter     19 =
+Max Snow Int Capacity    19 = 0.003
+Mass Release Drip Ratio  19 = 0.4
+Snow Interception Eff    19 = 0.6
+Impervious Fraction      19 = 0.0 
+Height                   19 = 10.70 0.5 
+Maximum Resistance       19 = 5000.0 3000.0
+Minimum Resistance       19 = 666.6 666.6
+Moisture Threshold       19 = 0.33 0.13
+Vapor Pressure Deficit   19 = 4000.0 4000.0
+Rpc                      19 = 10 10 
+Number of Root Zones     19 = 3
+Root Zone Depths         19 = 0.06 0.13 0.21
+Overstory Root Fraction  19 = 0.20 0.40 0.40    
+Understory Root Fraction 19 = 0.40 0.60 0.00 
+Overstory Monthly LAI    19 = 1.0 1.0 6.0 9.0 9.0 9.0 9.0 9.0 9.0 6.0 1.0 1.0
+Understory Monthly LAI   19 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    19 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   19 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 20 #################################################
+Vegetation Description   20 = HDWD2
+Overstory Present        20 = TRUE
+Understory Present       20 = TRUE
+Fractional Coverage      20 = 0.52
+Trunk Space              20 = 0.38 
+Aerodynamic Attenuation  20 = 1.5
+Radiation Attenuation    20 = 0.2
+Hemi Fract Coverage      20 =
+Clumping Factor          20 =
+Leaf Angle A             20 =
+Leaf Angle B             20 =
+Scattering Parameter     20 =
+Max Snow Int Capacity    20 = 0.003
+Mass Release Drip Ratio  20 = 0.4
+Snow Interception Eff    20 = 0.6
+Impervious Fraction      20 = 0.0 
+Height                   20 = 11.70 0.5 
+Maximum Resistance       20 = 5000.0 3000.0
+Minimum Resistance       20 = 666.6 666.6
+Moisture Threshold       20 = 0.33 0.13
+Vapor Pressure Deficit   20 = 4000.0 4000.0
+Rpc                      20 = 10 10 
+Number of Root Zones     20 = 3
+Root Zone Depths         20 = 0.06 0.13 0.21
+Overstory Root Fraction  20 = 0.20 0.40 0.40    
+Understory Root Fraction 20 = 0.40 0.60 0.00 
+Overstory Monthly LAI    20 = 1.0 1.0 6.0 9.0 9.0 9.0 9.0 9.0 9.0 6.0 1.0 1.0
+Understory Monthly LAI   20 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    20 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   20 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 21 #################################################
+Vegetation Description   21 = HDWD3
+Overstory Present        21 = TRUE
+Understory Present       21 = TRUE
+Fractional Coverage      21 = 0.85
+Trunk Space              21 = 0.38 
+Aerodynamic Attenuation  21 = 1.5
+Radiation Attenuation    21 = 0.2
+Hemi Fract Coverage      21 =
+Clumping Factor          21 =
+Leaf Angle A             21 =
+Leaf Angle B             21 =
+Scattering Parameter     21 =
+Max Snow Int Capacity    21 = 0.003
+Mass Release Drip Ratio  21 = 0.4
+Snow Interception Eff    21 = 0.6
+Impervious Fraction      21 = 0.0 
+Height                   21 = 10.30 0.5 
+Maximum Resistance       21 = 5000.0 3000.0
+Minimum Resistance       21 = 666.6 666.6
+Moisture Threshold       21 = 0.33 0.13
+Vapor Pressure Deficit   21 = 4000.0 4000.0
+Rpc                      21 = 10 10 
+Number of Root Zones     21 = 3
+Root Zone Depths         21 = 0.06 0.13 0.21
+Overstory Root Fraction  21 = 0.20 0.40 0.40    
+Understory Root Fraction 21 = 0.40 0.60 0.00 
+Overstory Monthly LAI    21 = 1.0 1.0 5.0 8.0 8.0 8.0 8.0 8.0 8.0 5.0 1.0 1.0
+Understory Monthly LAI   21 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    21 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   21 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 22 #################################################
+Vegetation Description   22 = MOIST_int1 
+Overstory Present        22 = TRUE
+Understory Present       22 = TRUE
+Fractional Coverage      22 = 0.18
+Trunk Space              22 = 0.33 
+Aerodynamic Attenuation  22 = 2.0
+Radiation Attenuation    22 = 0.15
+Hemi Fract Coverage      22 =
+Clumping Factor          22 =
+Leaf Angle A             22 =
+Leaf Angle B             22 =
+Scattering Parameter     22 =
+Max Snow Int Capacity    22 = 0.02
+Mass Release Drip Ratio  22 = 0.4
+Snow Interception Eff    22 = 0.6
+Impervious Fraction      22 = 0.0 
+Height                   22 = 21.70 0.5 
+Maximum Resistance       22 = 5000.0 3000.0
+Minimum Resistance       22 = 666.6 200.0
+Moisture Threshold       22 = 0.33 0.13
+Vapor Pressure Deficit   22 = 4000.0 4000.0
+Rpc                      22 = 10 10 
+Number of Root Zones     22 = 3
+Root Zone Depths         22 = 0.06 0.13 0.21
+Overstory Root Fraction  22 = 0.20 0.40 0.40    
+Understory Root Fraction 22 = 0.40 0.60 0.00 
+Overstory Monthly LAI    22 = 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0 5.0
+Understory Monthly LAI   22 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    22 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   22 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 23 #################################################
+Vegetation Description   23 = MOIST_int2 
+Overstory Present        23 = TRUE
+Understory Present       23 = TRUE
+Fractional Coverage      23 = 0.52
+Trunk Space              23 = 0.33 
+Aerodynamic Attenuation  23 = 2.0
+Radiation Attenuation    23 = 0.15
+Hemi Fract Coverage      23 =
+Clumping Factor          23 =
+Leaf Angle A             23 =
+Leaf Angle B             23 =
+Scattering Parameter     23 =
+Max Snow Int Capacity    23 = 0.02
+Mass Release Drip Ratio  23 = 0.4
+Snow Interception Eff    23 = 0.6
+Impervious Fraction      23 = 0.0 
+Height                   23 = 20.00 0.5 
+Maximum Resistance       23 = 5000.0 3000.0
+Minimum Resistance       23 = 666.6 200.0
+Moisture Threshold       23 = 0.33 0.13
+Vapor Pressure Deficit   23 = 4000.0 4000.0
+Rpc                      23 = 10 10 
+Number of Root Zones     23 = 3
+Root Zone Depths         23 = 0.06 0.13 0.21
+Overstory Root Fraction  23 = 0.20 0.40 0.40    
+Understory Root Fraction 23 = 0.40 0.60 0.00 
+Overstory Monthly LAI    23 = 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0
+Understory Monthly LAI   23 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    23 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   23 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 24 #################################################
+Vegetation Description   24 = MOIST_int3 
+Overstory Present        24 = TRUE
+Understory Present       24 = TRUE
+Fractional Coverage      24 = 0.89
+Trunk Space              24 = 0.33 
+Aerodynamic Attenuation  24 = 2.0
+Radiation Attenuation    24 = 0.15
+Hemi Fract Coverage      24 =
+Clumping Factor          24 =
+Leaf Angle A             24 =
+Leaf Angle B             24 =
+Scattering Parameter     24 =
+Max Snow Int Capacity    24 = 0.02
+Mass Release Drip Ratio  24 = 0.4
+Snow Interception Eff    24 = 0.6
+Impervious Fraction      24 = 0.0 
+Height                   24 = 17.00 0.5 
+Maximum Resistance       24 = 5000.0 3000.0
+Minimum Resistance       24 = 666.6 200.0
+Moisture Threshold       24 = 0.33 0.13
+Vapor Pressure Deficit   24 = 4000.0 4000.0
+Rpc                      24 = 10 10 
+Number of Root Zones     24 = 3
+Root Zone Depths         24 = 0.06 0.13 0.21
+Overstory Root Fraction  24 = 0.20 0.40 0.40    
+Understory Root Fraction 24 = 0.40 0.60 0.00 
+Overstory Monthly LAI    24 = 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0
+Understory Monthly LAI   24 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    24 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   24 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 25 #################################################
+Vegetation Description   25 = MOIST_ofms2
+Overstory Present        25 = TRUE
+Understory Present       25 = TRUE
+Fractional Coverage      25 = 0.60
+Trunk Space              25 = 0.32 
+Aerodynamic Attenuation  25 = 2.0
+Radiation Attenuation    25 = 0.15
+Hemi Fract Coverage      25 =
+Clumping Factor          25 =
+Leaf Angle A             25 =
+Leaf Angle B             25 =
+Scattering Parameter     25 =
+Max Snow Int Capacity    25 = 0.04
+Mass Release Drip Ratio  25 = 0.4
+Snow Interception Eff    25 = 0.6
+Impervious Fraction      25 = 0.0 
+Height                   25 = 21.10 0.5 
+Maximum Resistance       25 = 5000.0 3000.0
+Minimum Resistance       25 = 666.6 200.0
+Moisture Threshold       25 = 0.33 0.13
+Vapor Pressure Deficit   25 = 4000.0 4000.0
+Rpc                      25 = 10 10 
+Number of Root Zones     25 = 3
+Root Zone Depths         25 = 0.06 0.13 0.21
+Overstory Root Fraction  25 = 0.20 0.40 0.40    
+Understory Root Fraction 25 = 0.40 0.60 0.00 
+Overstory Monthly LAI    25 = 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0 6.0
+Understory Monthly LAI   25 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    25 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   25 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 26 #################################################
+Vegetation Description   26 = MOIST_ofms3
+Overstory Present        26 = TRUE
+Understory Present       26 = TRUE
+Fractional Coverage      26 = 0.88
+Trunk Space              26 = 0.32 
+Aerodynamic Attenuation  26 = 2.0
+Radiation Attenuation    26 = 0.15
+Hemi Fract Coverage      26 =
+Clumping Factor          26 =
+Leaf Angle A             26 =
+Leaf Angle B             26 =
+Scattering Parameter     26 =
+Max Snow Int Capacity    26 = 0.04
+Mass Release Drip Ratio  26 = 0.4
+Snow Interception Eff    26 = 0.6
+Impervious Fraction      26 = 0.0 
+Height                   26 = 26.50 0.5 
+Maximum Resistance       26 = 5000.0 3000.0
+Minimum Resistance       26 = 666.6 200.0
+Moisture Threshold       26 = 0.33 0.13
+Vapor Pressure Deficit   26 = 4000.0 4000.0
+Rpc                      26 = 10 10 
+Number of Root Zones     26 = 3
+Root Zone Depths         26 = 0.06 0.13 0.21
+Overstory Root Fraction  26 = 0.20 0.40 0.40    
+Understory Root Fraction 26 = 0.40 0.60 0.00 
+Overstory Monthly LAI    26 = 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0
+Understory Monthly LAI   26 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    26 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   26 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 27 #################################################
+Vegetation Description   27 = MOIST_ofss2
+Overstory Present        27 = TRUE
+Understory Present       27 = TRUE
+Fractional Coverage      27 = 0.44
+Trunk Space              27 = 0.36 
+Aerodynamic Attenuation  27 = 2.0
+Radiation Attenuation    27 = 0.15
+Hemi Fract Coverage      27 =
+Clumping Factor          27 =
+Leaf Angle A             27 =
+Leaf Angle B             27 =
+Scattering Parameter     27 =
+Max Snow Int Capacity    27 = 0.04
+Mass Release Drip Ratio  27 = 0.4
+Snow Interception Eff    27 = 0.6
+Impervious Fraction      27 = 0.0 
+Height                   27 = 29.20 0.5 
+Maximum Resistance       27 = 5000.0 3000.0
+Minimum Resistance       27 = 666.6 200.0
+Moisture Threshold       27 = 0.33 0.13
+Vapor Pressure Deficit   27 = 4000.0 4000.0
+Rpc                      27 = 10 10 
+Number of Root Zones     27 = 3
+Root Zone Depths         27 = 0.06 0.13 0.21
+Overstory Root Fraction  27 = 0.20 0.40 0.40    
+Understory Root Fraction 27 = 0.40 0.60 0.00 
+Overstory Monthly LAI    27 = 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0
+Understory Monthly LAI   27 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    27 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   27 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 28 #################################################
+Vegetation Description   28 = MOIST_ofss3
+Overstory Present        28 = TRUE
+Understory Present       28 = TRUE
+Fractional Coverage      28 = 0.90
+Trunk Space              28 = 0.36 
+Aerodynamic Attenuation  28 = 2.0
+Radiation Attenuation    28 = 0.15
+Hemi Fract Coverage      28 =
+Clumping Factor          28 =
+Leaf Angle A             28 =
+Leaf Angle B             28 =
+Scattering Parameter     28 =
+Max Snow Int Capacity    28 = 0.04
+Mass Release Drip Ratio  28 = 0.4
+Snow Interception Eff    28 = 0.6
+Impervious Fraction      28 = 0.0 
+Height                   28 = 29.10 0.5 
+Maximum Resistance       28 = 5000.0 3000.0
+Minimum Resistance       28 = 666.6 200.0
+Moisture Threshold       28 = 0.33 0.13
+Vapor Pressure Deficit   28 = 4000.0 4000.0
+Rpc                      28 = 10 10 
+Number of Root Zones     28 = 3
+Root Zone Depths         28 = 0.06 0.13 0.21
+Overstory Root Fraction  28 = 0.20 0.40 0.40    
+Understory Root Fraction 28 = 0.40 0.60 0.00 
+Overstory Monthly LAI    28 = 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 7.0 
+Understory Monthly LAI   28 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    28 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+Understory Monthly Alb   28 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 29 #################################################
+Vegetation Description   29 = agriculture
+Overstory Present        29 = FALSE
+Understory Present       29 = TRUE 
+Fractional Coverage      29 = 
+Trunk Space              29 = 
+Aerodynamic Attenuation  29 =
+Radiation Attenuation    29 =
+Hemi Fract Coverage      29 =
+Clumping Factor          29 =
+Leaf Angle A             29 =
+Leaf Angle B             29 =
+Scattering Parameter     29 =
+Max Snow Int Capacity    29 =
+Mass Release Drip Ratio  29 =
+Snow Interception Eff    29 =
+Impervious Fraction      29 = 0.0  
+Height                   29 = 1.0  
+Maximum Resistance       29 = 600. 
+Minimum Resistance       29 = 120. 
+Moisture Threshold       29 = 0.33 
+Vapor Pressure Deficit   29 = 4000 
+Rpc                      29 = 10 
+Number of Root Zones     29 = 3
+Root Zone Depths         29 = 0.06 0.13 0.21
+Overstory Root Fraction  29 = 
+Understory Root Fraction 29 = 0.40 0.60 0.00
+Overstory Monthly LAI    29 = 
+Understory Monthly LAI   29 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    29 = 
+Understory Monthly Alb   29 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 30 #################################################
+Vegetation Description   30 = grassland
+Overstory Present        30 = FALSE
+Understory Present       30 = TRUE 
+Fractional Coverage      30 = 
+Trunk Space              30 = 
+Aerodynamic Attenuation  30 =
+Radiation Attenuation    30 =
+Hemi Fract Coverage      30 =
+Clumping Factor          30 =
+Leaf Angle A             30 =
+Leaf Angle B             30 =
+Scattering Parameter     30 =
+Max Snow Int Capacity    30 =
+Mass Release Drip Ratio  30 =
+Snow Interception Eff    30 =
+Impervious Fraction      30 = 0.0 
+Height                   30 = 0.5 
+Maximum Resistance       30 = 600. 
+Minimum Resistance       30 = 200. 
+Moisture Threshold       30 = 0.33 
+Vapor Pressure Deficit   30 = 4000 
+Rpc                      30 = 10
+Number of Root Zones     30 = 3
+Root Zone Depths         30 = 0.015 0.035 0.05
+Overstory Root Fraction  30 = 
+Understory Root Fraction 30 = 0.40 0.60 0.00
+Overstory Monthly LAI    30 = 
+Understory Monthly LAI   30 = 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0
+Overstory Monthly Alb    30 = 
+Understory Monthly Alb   30 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 31 #################################################
+Vegetation Description   31 = shrubland 
+Overstory Present        31 = FALSE
+Understory Present       31 = TRUE 
+Fractional Coverage      31 = 
+Trunk Space              31 = 
+Aerodynamic Attenuation  31 =
+Radiation Attenuation    31 =
+Hemi Fract Coverage      31 =
+Clumping Factor          31 =
+Leaf Angle A             31 =
+Leaf Angle B             31 =
+Scattering Parameter     31 =
+Max Snow Int Capacity    31 =
+Mass Release Drip Ratio  31 =
+Snow Interception Eff    31 =
+Impervious Fraction      31 = 0.0 
+Height                   31 = 1.5 
+Maximum Resistance       31 = 600. 
+Minimum Resistance       31 = 200. 
+Moisture Threshold       31 = 0.33 
+Vapor Pressure Deficit   31 = 4000 
+Rpc                      31 = 10 
+Number of Root Zones     31 = 3
+Root Zone Depths         31 = 0.06 0.13 0.21
+Overstory Root Fraction  31 = 
+Understory Root Fraction 31 = 0.40 0.60 0.00
+Overstory Monthly LAI    31 = 
+Understory Monthly LAI   31 = 10.0 10.0 10.0 10.0 10.0 10.0 10.0 10.0 10.0 10.0 10.0 10.0
+Overstory Monthly Alb    31 = 
+Understory Monthly Alb   31 = 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+
+################ VEGETATION 32 #################################################
+Vegetation Description   32 = water 
+Overstory Present        32 = FALSE
+Understory Present       32 = FALSE
+Fractional Coverage      32 = #0.00
+Trunk Space              32 = #0.00
+Aerodynamic Attenuation  32 =
+Radiation Attenuation    32 =
+Hemi Fract Coverage      32 =
+Clumping Factor          32 =
+Leaf Angle A             32 =
+Leaf Angle B             32 =
+Scattering Parameter     32 =
+Max Snow Int Capacity    32 =
+Mass Release Drip Ratio  32 =
+Snow Interception Eff    32 =
+Impervious Fraction      32 = 0.0 
+Height                   32 = #0.00 0.00
+Maximum Resistance       32 = 
+Minimum Resistance       32 = 
+Moisture Threshold       32 = 
+Vapor Pressure Deficit   32 = 
+Rpc                      32 = 
+Number of Root Zones     32 = 3 
+Root Zone Depths         32 = 0.007 0.017 0.026
+Overstory Root Fraction  32 = 
+Understory Root Fraction 32 = 0.0 0.0 0.0
+Overstory Monthly LAI    32 = 
+Understory Monthly LAI   32 = 
+Overstory Monthly Alb    32 = 
+Understory Monthly Alb   32 = 
+
+################ VEGETATION 33 #################################################
+Vegetation Description   33 = rock
+Overstory Present        33 = FALSE
+Understory Present       33 = FALSE
+Fractional Coverage      33 = #0.00
+Trunk Space              33 = #0.00
+Aerodynamic Attenuation  33 =
+Radiation Attenuation    33 =
+Hemi Fract Coverage      33 =
+Clumping Factor          33 =
+Leaf Angle A             33 =
+Leaf Angle B             33 =
+Scattering Parameter     33 =
+Max Snow Int Capacity    33 =
+Mass Release Drip Ratio  33 =
+Snow Interception Eff    33 =
+Impervious Fraction      33 = 0.0 
+Height                   33 = #0.00 0.00
+Maximum Resistance       33 = 
+Minimum Resistance       33 = 
+Moisture Threshold       33 = 
+Vapor Pressure Deficit   33 = 
+Rpc                      33 = 
+Number of Root Zones     33 = 3 
+Root Zone Depths         33 = 0.007 0.017 0.026
+Overstory Root Fraction  33 = 
+Understory Root Fraction 33 = 0.0 0.0 0.0
+Overstory Monthly LAI    33 = 
+Understory Monthly LAI   33 = 
+Overstory Monthly Alb    33 = 
+Understory Monthly Alb   33 = 
+
+################ VEGETATION 34 #################################################
+Vegetation Description   34 = barren
+Overstory Present        34 = FALSE
+Understory Present       34 = FALSE
+Fractional Coverage      34 = #0.00
+Trunk Space              34 = #0.00
+Aerodynamic Attenuation  34 = 
+Radiation Attenuation    34 =
+Hemi Fract Coverage      34 =
+Clumping Factor          34 =
+Leaf Angle A             34 =
+Leaf Angle B             34 =
+Scattering Parameter     34 =
+Max Snow Int Capacity    34 =
+Mass Release Drip Ratio  34 =
+Snow Interception Eff    34 =
+Impervious Fraction      34 = 0.0 
+Height                   34 = #0.00 0.00
+Maximum Resistance       34 = 
+Minimum Resistance       34 = 
+Moisture Threshold       34 = 
+Vapor Pressure Deficit   34 = 
+Rpc                      34 = 
+Number of Root Zones     34 = 3 
+Root Zone Depths         34 = 0.007 0.017 0.026
+Understory Root Fraction 34 = 0.0 0.0 0.0
+Overstory Monthly LAI    34 = 
+Understory Monthly LAI   34 = 
+Overstory Monthly Alb    34 = 
+Understory Monthly Alb   34 = 
+
+################ VEGETATION 35 #################################################
+Vegetation Description   35 = barren
+Overstory Present        35 = FALSE
+Understory Present       35 = FALSE
+Fractional Coverage      35 = 
+Trunk Space              35 = 
+Aerodynamic Attenuation  35 = 
+Radiation Attenuation    35 =
+Hemi Fract Coverage      35 =
+Clumping Factor          35 =
+Leaf Angle A             35 =
+Leaf Angle B             35 =
+Scattering Parameter     35 =
+Max Snow Int Capacity    35 =
+Mass Release Drip Ratio  35 =
+Snow Interception Eff    35 =
+Impervious Fraction      35 = 0.0 
+Height                   35 = 
+Maximum Resistance       35 = 
+Minimum Resistance       35 = 
+Moisture Threshold       35 = 
+Vapor Pressure Deficit   35 = 
+Rpc                      35 = 
+Number of Root Zones     35 = 3 
+Root Zone Depths         35 = 0.007 0.017 0.026
+Overstory Root Fraction  35 = 
+Understory Root Fraction 35 = 0.0 0.0 0.0
+Overstory Monthly LAI    35 = 
+Understory Monthly LAI   35 = 
+Overstory Monthly Alb    35 = 
+Understory Monthly Alb   35 = 
+
+################################################################################
+# MODEL OUTPUT SECTION
+
+################################################################################
+[OUTPUT]                                  # Information what to output when
+Output Directory           = ../output/
+Initial State Directory    = ../modelstate/
+
+
+################ PIXEL DUMPS ###################################################
+
+Number of Output Pixels    = 1
+
+# For each pixel make a key-entry pair as indicated below, varying the 
+# number for the output pixel  (1, .. , Number of Output Pixel)
+
+North Coordinate         1 = 764682
+East Coordinate          1 = 404125
+Name                     1 = highest
+
+################ MODEL STATE ###################################################       
+        
+Number of Model States     =  1          # Number of model states to dump
+
+# For each model state make a key-entry pair as indicated below, varying the 
+# number for the model state dump (1, .. , Number of Model States)
+
+State Date               1 =  05/04/1992-03    # Time for model state dump
+State Date               2 =  05/17/1993-03
+State Date               3 =  05/07/1994-03
+State Date               4 =  05/20/1995-03
+State Date               5 =  06/03/1996-03
+State Date               6 =  05/15/1997-03
+State Date               7 =  06/13/1997-03
+State Date               8 =  07/05/1997-03
+State Date               9 =  10/01/1995-03
+################ MODEL MAPS ####################################################
+
+Number of Map Variables    = 6            # Number of different variables for
+                                          # which you want to output maps
+
+# For each of the variables make a block like the one that follows, varying
+# the number of the variable (n = 1, .. , Number of Map Variables)
+
+Map Variable             1 = 404          # ID of the variable to output
+Map Layer                1 = 1           # If the variable exists for a number
+					  # of layers, specify the layers here
+					  # with the top layer = 1
+Number of Maps           1 = 7           # Number of maps you would like to 
+					  # output for this variable
+Map Date 1               1 = 05/08/1992-00
+Map Date 2               1 = 05/18/1993-15
+Map Date 3               1 = 05/30/1995-00
+Map Date 4               1 = 11/30/1995-00
+Map Date 5               1 = 06/08/1996-00
+Map Date 6               1 = 05/17/1997-00
+Map Date 7               1 = 06/15/1997-00
+                                          
+Map Variable             2 = 503 
+Map Layer                2 = 1  
+Number of Maps           2 = 2   
+Map Date 1               2 = 05/08/1992-00
+Map Date 2               2 = 05/18/1993-15
+Map Date 3               2 = 05/30/1995-00
+Map Date 4               2 = 11/30/1995-00
+Map Date 5               2 = 06/08/1996-00
+Map Date 6               2 = 05/17/1997-00
+Map Date 7               2 = 06/15/1997-00
+
+Map Variable             3 = 513
+Map Layer                3 = 1  
+Number of Maps           3 = 2
+Map Date 1               3 = 05/08/1992-00
+Map Date 2               3 = 05/18/1993-15 
+Map Date 3               3 = 05/30/1995-00
+Map Date 4               3 = 11/30/1995-00
+Map Date 5               3 = 06/08/1996-00
+Map Date 6               3 = 05/17/1997-00
+Map Date 7               3 = 06/15/1997-00
+
+Map Variable             4 = 206
+Map Layer                4 = 1  
+Number of Maps           4 = 1
+Map Date 1               4 = 10/01/1993-06
+
+Map Variable             5 = 504
+Map Layer                5 = 1  
+Number of Maps           5 = 1
+Map Date 1               5 = 10/01/1993-06
+
+Map Variable             6 = 602
+Map Layer                6 = 1  
+Number of Maps           6 = 1
+Map Date 1               6 = 10/01/1993-06
+
+#101 Evap.ETot
+#102 Evap.EPot
+#103 Evap.EInt
+#104 Evap.ESoil
+#105 Evap.EAct
+#201 Precip
+#202 Precip.IntRain
+#203 Precip.IntSnow
+#301 Rad.Beam
+#302 Rad.Diffuse
+#401 Snow.HasSnow
+#402 Snow.SnowCoverOver
+#403 Snow.LastSnow
+#404 Snow.Swq
+#405 Snow.Melt
+#406 Snow.PackWater
+#407 Snow.TPack
+#408 Snow.SurfWater
+#409 Snow.TSurf
+#410 Snow.ColdContent
+#501 Soil.Moist
+#502 Soil.Perc
+#503 Soil.TableDepth
+#504 Soil.NetFlux
+#505 Soil.TSurf
+#506 Soil.Qnet
+#507 Soil.Qs
+#508 Soil.Qe
+#509 Soil.Qg
+#510 Soil.Qst
+#**513 SoilMap.IExcess
+#**514 SoilMap.InfiltAcc
+#801 FineMap.Dem
+#802 FineMap.Slope
+#803 FineMap.SatThickness
+#804 FineMap.DeltaDepth
+#805 FineMap.Probability
+#806 FineMap.SedimentToChannel
+#901 SedMap.SedFluxOut
+#902 SedMap.Erosion
+#903 Network.Erosion
+
+# Not in ExecDump
+#001 Basin.DEM
+#002 Basin.Mask
+#003 Soil.Type
+#004 Soil.Depth
+#005 Veg.Type
+#006 Travel.Time
+#204 Temp.Instor
+#205 PRISM.Precip
+#303 Rad.SW.Total
+#304 Shade.Factor
+#305 SkyView.Factor
+#511 Soil.Temp
+#512 Soil.Runoff
+#601 WindModel
+#602 Precip.Lapse
+#605 RadarMap.Precip
+#701 MetMap.accum_precip
+#702 MetMap.air_temp
+#703 MetMap.windspeed
+#704 MetMap.humidity
+
+################ MODEL IMAGES ##################################################
+
+Number of Image Variables  =  0           # Number of variables for which you 
+                                          # would like to output images
+
+# For each of the variables make a block like the one that follows, varying
+# the number of the variable (n = 1, .. , Number of Image Variables)
+
+Image Variable        1 =                 # ID of the variable to output
+Image Layer           1 =                 # If the variable exists for a number
+					  # of layers, specify the layers here
+					  # with the top layer = 1
+Image Start           1 =                 # First timestep for which to output
+                                          # an image
+Image End             1 =                 # Last timestep for which to output
+                                          # an image
+Image Interval        1 =                 # Time interval between images (hours)
+Image Upper Limit     1 =                 # All values in the output equal to or
+                                          # greater than this limit will be set 
+                                          # to 255
+Image Lower Limit     1 =                 # All values in the output equal to or
+                                          # smaller than this limit will be set 
+                                          # to 0
+################ GRAPHIC IMAGES ##################################################
+
+Number of Graphics      = 0               # Number of variables for which you 
+                                          # would like to output images
+Graphics ID           1 = 49             # ID of the variable to output
+Graphics ID           2 =  
+Graphics ID           3 = 6
+Graphics ID           4 = 2
+Graphics ID           5 = 19
+Graphics ID           6 = 20
+Graphics ID           7 = 21
+Graphics ID           8 = 
+Graphics ID           9 = 
+Graphics ID           10 = 
+
+# 1	SWE (mm)
+# 2	Water Table Depth (mm)
+# 3	Digital Elevation Model (m)
+# 4	Vegetation Class (index #)
+# 5	Soil Class (index #)
+# 6	Soil Depth (mm)
+# 7	Precipitation at current time step (mm/time step)
+# 8	Incoming Shortwave (Beam and Diffuse) (W/sqm)
+# 9	Intercepted Snow (mm)
+# 10	Snow Surface Temp (C)
+# 11	Cold Content of snow entire snow pack (kJ)
+# 12	Snow Melt (as Outflow minus Precip, can be negative) (mm/time step)
+# 13	Snow Pack Outflow (mm/time step)
+# 14	Saturated Subsurface Flow (mm/time step)
+# 15	Overland Flow (mm)
+# 16	Total Evapotranspiration (soil + all veg layers)
+# 17	Ground Snow pack vapor flux (mm)
+# 18	Intercepted snow pack vapor flux (mm)
+# 19    Soil Moisture (Surface Layer) % of saturation (i.e. porosity)
+# 20    Soil Moisture (2nd Layer) % of saturation (i.e. porosity)
+# 21    Soil Moisture (3rd Layer) % of saturation (i.e. porosity)
+# 22    Accumulated Precip (mm)
+# 23    Air temperature (C)
+# 24    Wind speed (m/s)
+# 25    Relative humidity
+# 26    Prism Precip Field (mm)
+# 27    Deep Layer Storage (% Sat)
+# 28    Surface runoff from HOF and Return Flow (mm)
+# 29    Infiltration Accumulation (mm)
+# 30    Sediment to Channel (m)
+# 31    Overstory Transpiration (mm)
+# 32    Understory Transpirtation (mm)
+# 33    Soil Evaporation (mm)
+# 34    Overstory Evaporation (mm)
+# 35    Understory Evaportation (mm)
+# 36    Fine Map Elevation (m)
+# 37    Fine Map Water Table Thickness (m)
+# 38    Change in Sediment Depth (m)
+# 39    Failure Probability
+# 40   
+# 41    Sky View Factor (%)
+# 42    Shade Map (%)
+# 43    Direct Beam Shortwave Rad (W/sqm)
+# 44    Diffuse Beam Shortwave Rad (W/sqm)
+# 45    Aspect (degrees)
+# 46    Slope (percent)
+# 47    Sediment Flux (m3/m3)
+# 48    Erosion (m)
+# 49    Road Erosion (m)
+# 50    Channel Subsurface Interception (mm)
+# 51    Road Subsurface Interception (mm)
+# WARNING Use soil mositure layers with caution, to minimize calculations during
+# redraw DHSVM does not check to make sure that the assigned soil layer exists
+
+################################################################################
+# END OF INPUT FILE
+################################################################################
+[End]                                     # This is probably not needed, but 
+                                          # just in case (to close the previous
+                                          # section)
