@@ -11,7 +11,7 @@ set key width -5
 set format x "%d%b\n%Y"
 set ylabel "Basin-wide Snow Water Equivalent, m"
 
-plot 'Aggregated.Values' every 8::1 using 1:($9) title "Serial (master 59e3)" with points ls 7 lc "gray50", \
-     '../output.4/Aggregated.Values' every ::1 using 1:($9) title "Parallel (parallel e24b)" with lines ls 1 lw 2 lc "red",
+plot 'Aggregated.Values' every 8::1 using 1:($9) title "Serial (master 59e3230)" with points ls 7 lc "gray50", \
+     '../output.4/Aggregated.Values' every ::1 using 1:($9) title "Parallel (parallel e24b11c)" with lines ls 1 lw 2 lc "red",
 
 
