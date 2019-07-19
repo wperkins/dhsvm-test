@@ -1,19 +1,18 @@
 # Rainy Creek Basin
 
-Rainy Creek is a small tributary to the ?? River in ??, USA.  This
-case was used as a DHSVM tutorial.  It is regularly used as a sanity
-test when DHSVM changes are made.
-
 *This is NOT a DHSVM tutorial*. 
+
+Rainy Creek is a small tributary to the Wenatchee River in western
+Washington, USA.  This case was used as a DHSVM tutorial and the
+original is available [](here).  It is regularly used as a sanity test
+when DHSVM changes are made. Only minor modifications to the original
+configuration is necessary to make this case work with modern DHSVM.
 
 ## Set up
 
-  * Build DHSVM, with the NetCDF option if desired. 
-
   * Modify `arcinfo/rainy30/makebin.sh` (binary format) or
-    `arcinfo/rainy30/makenc.sh` (NetCDF format) to point to reference
-    the appropriate DHSVM and/or GDAL programs then
-    running the script.   
+    `arcinfo/rainy30/makenc.sh` (NetCDF format) to point
+    the appropriate DHSVM and/or [https://gdal.org/](GDAL) programs.
     
   * Run `makebin.sh` or `makennc.sh` to generate the input maps.
     
