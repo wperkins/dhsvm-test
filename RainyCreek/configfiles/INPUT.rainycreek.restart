@@ -56,7 +56,7 @@ Infiltration	     = STATIC		  # STATIC or DYNAMIC
 
 Cressman radius      = 10                 # in model pixels
 Cressman stations    = 4                  # number of stations
-Stream Temperature   = FALSE
+Stream Temperature   = TRUE
 Riparian Shading     = FALSE
 Improved Radiation Scheme = FALSE
 Gridded Met Data     = FALSE
