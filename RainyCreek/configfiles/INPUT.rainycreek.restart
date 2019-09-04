@@ -63,6 +63,7 @@ Gridded Met Data     = FALSE
 Variable Light Transmittance = FALSE
 Canopy Gapping       = FALSE
 Snow Sliding         = FALSE
+Snow Statistics      = TRUE
 
 ################################################################################
 # MODEL AREA SECTION
@@ -766,6 +767,8 @@ Depth Threshold        21 = 0.0
 [VEGETATION]
 
 Vegetation Map File        = ../arcinfo/rainy30/rc_veg.bin
+Vegetation FC Map File     = ../arcinfo/spatial_para/veg_type_fc.bin
+Vegetation LAI Map File    = ../arcinfo/spatial_para/veg_type_lai.bin
 Number of Vegetation Types = 34
 
 # From the Forest Service. All other veg types are templates.
