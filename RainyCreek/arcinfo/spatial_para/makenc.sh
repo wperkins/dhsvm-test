@@ -7,7 +7,7 @@
 # -------------------------------------------------------------
 # -------------------------------------------------------------
 # Created September  4, 2019 by William A. Perkins
-# Last Change: 2019-09-05 08:30:01 d3g096
+# Last Change: 2019-09-05 11:01:29 d3g096
 # -------------------------------------------------------------
 
 
@@ -81,6 +81,28 @@ domulti() {
         fi
         first="0"
     done
+    rm -f mtmp.asc mtmp.nc
+}
+
+dolayered() {
+    out="$1"; shift
+    lvar="$1"; shift
+    ityp="$1"; shift
+
+    lyr=0
+    while [ $# -gt 0 ]; do
+        cp "$1" mtmp.asc
+        v="${lyr}.${lvar}"
+        doit mtmp "$v" "$ityp"
+        if [ "$lyr" -eq 0 ]; then
+            cp mtmp.nc "$out"
+        else
+            ncks -h -A -C -v "$v" mtmp.nc "$out"
+        fi
+        lyr=`expr "$lyr" + 1 `
+        shift
+    done
+    # rm -f mtmp.asc mtmp.nc
 }
 
 doit veg_type_fc "Veg.Fract" f
@@ -97,3 +119,8 @@ domulti veg_type_lai.nc "Veg.LAI" f \
     veg_type_lai10.asc \
     veg_type_lai11.asc \
     veg_type_lai12.asc
+doit soil_type_kslat "Soil.KsLat" f
+dolayered soil_type_poro.nc "Soil.Porosity" f \
+    soil_type_poro01.asc \
+    soil_type_poro02.asc \
+    soil_type_poro03.asc
