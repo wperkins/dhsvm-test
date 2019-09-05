@@ -4,7 +4,7 @@
 # -------------------------------------------------------------
 # -------------------------------------------------------------
 # Created September  4, 2019 by William A. Perkins
-# Last Change: 2019-09-04 08:12:47 d3g096
+# Last Change: 2019-09-05 09:04:09 d3g096
 # -------------------------------------------------------------
 
 set -xue
@@ -60,3 +60,8 @@ domany veg_type_lai f \
     veg_type_lai11.asc \
     veg_type_lai12.asc
 
+doit soil_type_kslat f
+domany soil_type_poro f \
+    soil_type_poro01.asc \
+    soil_type_poro02.asc \
+    soil_type_poro03.asc

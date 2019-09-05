@@ -226,6 +226,8 @@ Precipitation lapse rate =
 [SOILS]                                   # Soil information
 
 Soil Map File	     = ../arcinfo/rainy30/rainysoil.bin
+Soil Conductivity Map File = ../arcinfo/spatial_para/soil_type_kslat.bin
+Soil Porosity Map File = ../arcinfo/spatial_para/soil_type_poro.bin
 
 # minimum depth still 0.1 maximum depth 2
 Soil Depth File      = ../arcinfo/rainy30/soildepth.bin
