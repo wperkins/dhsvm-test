@@ -768,7 +768,7 @@ Depth Threshold        21 = 0.0
 
 Vegetation Map File        = ../arcinfo/rainy30/rc_veg.nc
 Vegetation FC Map File     = ../arcinfo/spatial_para/veg_type_fc.nc
-# Vegetation LAI Map File    = ../arcinfo/spatial_para/veg_type_lai.nc
+Vegetation LAI Map File    = ../arcinfo/spatial_para/veg_type_lai.nc
 Number of Vegetation Types = 34
 
 # From the Forest Service. All other veg types are templates.
