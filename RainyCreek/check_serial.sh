@@ -11,6 +11,7 @@ numdiff=numdiff
 
 # Directory with expected output files
 gooddir="../output.serial"
+gooddir="../output.4"
 
 # Relative numeric error to except (this is really low)
 relerr="1.0E-04"
