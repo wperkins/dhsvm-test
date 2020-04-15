@@ -137,6 +137,12 @@ Stream Network File  = ../arcinfo/rainy30/stream.network.dat # path for stream n
 Stream Class File    = ../arcinfo/rainy30/stream.class.dat   # path for stream class file 
 
 MASS1 Configuration  = ../mass1
+MASS1 Internal Longwave = FALSE
+MASS1 Use Shading = FALSE
+MASS1 Use Bed = FALSE
+MASS1 Bed Depth = 2.0
+MASS1 Met Coefficient File = ../mass1/mass1_met_coeff.dat
+MASS1 Met Coefficient Output = mass1_met_coeff.dat
 
 Riparian Veg File    = none
 
