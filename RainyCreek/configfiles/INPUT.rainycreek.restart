@@ -65,6 +65,8 @@ Canopy Gapping       = FALSE
 Snow Sliding         = FALSE
 Snow Statistics      = TRUE
 
+Routing Neighbors    = 4                  # Must be 4 or 8
+
 ################################################################################
 # MODEL AREA SECTION
 ################################################################################
