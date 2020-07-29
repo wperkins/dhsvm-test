@@ -143,6 +143,8 @@ MASS1 Use Bed = FALSE
 MASS1 Bed Depth = 2.0
 MASS1 Met Coefficient File = ../mass1/mass1_met_coeff.dat
 MASS1 Met Coefficient Output = mass1_met_coeff.dat
+MASS1 Quiet = FALSE
+MASS1 Gage Output = FALSE
 
 Riparian Veg File    = none
 
